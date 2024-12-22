@@ -88,5 +88,5 @@ app.delete('/api/entries/:id', (req, res) => {
 
 // Start Server
 app.listen(PORT, HOST, () => {
-  console.log(`✅ Server is running on http://${HOST}:${PORT}`);
+  console.log(`✅ Server is running on ${PORT}`);
 });
