@@ -14,7 +14,7 @@ WORKDIR /opt/server
 COPY package.json ./ 
 
 # Install dependencies explicitly (including production and auto-instrumentation packages)
-RUN npm install --omit=dev
+RUN npm install --omit=dev --legacy-peer-deps
 
 # Copy remaining files
 COPY *.js ./ 
