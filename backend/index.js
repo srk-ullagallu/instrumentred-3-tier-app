@@ -1,5 +1,9 @@
-
-require('newrelic');  
+if (process.env.NEW_RELIC_LICENSE_KEY) {
+  console.log('✅ New Relic is enabled.');
+  require('newrelic');
+} else {
+  console.warn('⚠️ NEW_RELIC_LICENSE_KEY is not set. Skipping New Relic initialization.');
+}  
 require('./otel');  
 
 const express = require('express');
@@ -84,5 +88,5 @@ app.delete('/api/entries/:id', (req, res) => {
 
 // Start Server
 app.listen(PORT, HOST, () => {
-  console.log(`Server is running on port ${PORT}`);
+  console.log(`✅ Server is running on http://${HOST}:${PORT}`);
 });
