@@ -9,6 +9,7 @@ COPY src ./src
 COPY public ./public
 
 RUN npm install --production
+ENV NODE_OPTIONS=--openssl-legacy-provider
 RUN npm run build
 
 # Stage 2: Serve with Nginx
