@@ -1,21 +1,29 @@
 FROM node:20-alpine
 
-# Install bash and necessary dependencies
+# Add bash for debugging if needed
 RUN apk add --no-cache bash
 
-# Create application user
+# Create a non-root user
 RUN mkdir /opt/server 
 RUN adduser -D -h /opt/server crud
 RUN chown crud:crud -R /opt/server
 
-# Set working directory
 WORKDIR /opt/server
 
-# Copy files
+# Copy dependencies
 COPY package.json ./ 
+
+# Install dependencies explicitly (including production and auto-instrumentation packages)
+RUN npm install --omit=dev
+
+# Copy remaining files
 COPY *.js ./ 
-COPY .env ./
-RUN npm install --production --legacy-peer-deps
+COPY .env ./ 
+
+# Switch to non-root user
 USER crud
+
+# Expose port
 EXPOSE 8080
+
 CMD ["node", "index.js"]
