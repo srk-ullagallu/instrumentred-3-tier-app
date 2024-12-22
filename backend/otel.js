@@ -1,33 +1,34 @@
 const { NodeSDK } = require('@opentelemetry/sdk-node');
-const { getNodeAutoInstrumentations } = require('@opentelemetry/auto-instrumentations-node');
 const { PrometheusExporter } = require('@opentelemetry/exporter-prometheus');
-const { diag, DiagConsoleLogger, DiagLogLevel } = require('@opentelemetry/api');
-const { MySQLInstrumentation } = require('@opentelemetry/instrumentation-mysql2'); // Ensure correct import
+const { HttpInstrumentation } = require('@opentelemetry/instrumentation-http');
+const { ExpressInstrumentation } = require('@opentelemetry/instrumentation-express');
+const { MySQL2Instrumentation } = require('@opentelemetry/instrumentation-mysql2'); // Correct Import
 
-// Enable verbose diagnostics for debugging
-diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.INFO);
-
-// Initialize Prometheus Exporter
+// Prometheus Exporter configuration
 const prometheusExporter = new PrometheusExporter({
   startServer: true,
-  port: 9464,
+  port: 9464, // Prometheus scraping will happen here
 }, () => {
-  console.log('✅ Prometheus metrics exposed at http://localhost:9464/metrics');
+  console.log('Prometheus metrics exposed at http://localhost:9464/metrics');
 });
 
-// Initialize OpenTelemetry SDK
+// Initialize OpenTelemetry SDK with the Prometheus exporter and required instrumentations
 const sdk = new NodeSDK({
   traceExporter: prometheusExporter,
   instrumentations: [
-    getNodeAutoInstrumentations(), // Auto-discover supported libraries
-    new MySQLInstrumentation() // Explicitly add MySQL instrumentation if required
+    new HttpInstrumentation(),
+    new ExpressInstrumentation(),
+    new MySQL2Instrumentation() // Use MySQL2 instrumentation for compatibility
   ],
 });
 
-// Start OpenTelemetry
 sdk.start()
-  .then(() => console.log('✅ OpenTelemetry initialized successfully'))
-  .catch((error) => console.error('❌ Error initializing OpenTelemetry:', error));
+  .then(() => {
+    console.log('✅ OpenTelemetry is running...');
+  })
+  .catch((err) => {
+    console.error('❌ Error starting OpenTelemetry:', err);
+  });
 
 // Graceful shutdown
 process.on('SIGTERM', () => {
