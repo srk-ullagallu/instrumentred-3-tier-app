@@ -12,13 +12,15 @@ ENV NODE_OPTIONS=--openssl-legacy-provider
 RUN npm install --production \
     && npm run build
 
-# Stage 2: Serve with Nginx
-FROM nginx:stable
+CMD ["node","src/index.js"]
 
-# Remove default Nginx files
-RUN rm -rf /usr/share/nginx/html/* \
-    && rm -rf /etc/nginx/nginx.conf \
-    && rm -rf /etc/nginx/conf.d/default.conf
+# # Stage 2: Serve with Nginx
+# FROM nginx:stable
 
-# Copy the build directory from the minify stage to the Nginx HTML directory
-COPY --from=minify /opt/server/build /usr/share/nginx/html/
+# # Remove default Nginx files
+# RUN rm -rf /usr/share/nginx/html/* \
+#     && rm -rf /etc/nginx/nginx.conf \
+#     && rm -rf /etc/nginx/conf.d/default.conf
+
+# # Copy the build directory from the minify stage to the Nginx HTML directory
+# COPY --from=minify /opt/server/build /usr/share/nginx/html/
