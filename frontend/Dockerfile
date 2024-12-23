@@ -1,19 +1,19 @@
-# Stage 1: Build React App (Minification)
 FROM node:20-alpine as minify
 
 WORKDIR /opt/server
 
-# Copy package.json and install dependencies
-COPY package.json ./
-COPY src ./src
-COPY public ./public
+# Copy package.json and other necessary files in one step
+COPY package.json ./ 
+COPY ./src ./src
+COPY ./public ./public
 
-RUN npm install --production
 ENV NODE_OPTIONS=--openssl-legacy-provider
-RUN npm run build
+
+RUN npm install --production \
+    && npm run build
 
 # Stage 2: Serve with Nginx
-FROM nginx:latest
+FROM nginx:stable
 
 # Remove default Nginx files
 RUN rm -rf /usr/share/nginx/html/* \
@@ -22,6 +22,3 @@ RUN rm -rf /usr/share/nginx/html/* \
 
 # Copy the build directory from the minify stage to the Nginx HTML directory
 COPY --from=minify /opt/server/build /usr/share/nginx/html/
-
-CMD ["sleep","3600"]
-
