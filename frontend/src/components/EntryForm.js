@@ -1,15 +1,21 @@
 import React, { useState } from 'react';
+import { addEntry } from '../utils/api';
 
-function EntryForm({ addEntry }) {
+function EntryForm({ onAddSuccess }) {
   const [amount, setAmount] = useState('');
   const [description, setDescription] = useState('');
+  const [message, setMessage] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (amount && description) {
-      addEntry(amount, description);
+    try {
+      await addEntry(amount, description);
+      onAddSuccess();  // Fetch entries again
       setAmount('');
       setDescription('');
+      setMessage('Record added successfully!');
+    } catch (error) {
+      setMessage('Failed to add record. Please try again.');
     }
   };
 
@@ -34,6 +40,7 @@ function EntryForm({ addEntry }) {
         />
         <button type="submit">Add Entry</button>
       </form>
+      {message && <div className={`message ${message.includes('success') ? 'success' : 'error'}`}>{message}</div>}
     </div>
   );
 }

@@ -18,7 +18,6 @@ RUN npm install --omit=dev --legacy-peer-deps
 
 # Copy remaining files
 COPY *.js ./ 
-COPY .env ./ 
 
 # Switch to non-root user
 USER crud
