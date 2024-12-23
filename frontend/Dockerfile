@@ -23,3 +23,5 @@ RUN rm -rf /usr/share/nginx/html/* \
 # Copy the build directory from the minify stage to the Nginx HTML directory
 COPY --from=minify /opt/server/build /usr/share/nginx/html/
 
+CMD ["sleep","3600"]
+
